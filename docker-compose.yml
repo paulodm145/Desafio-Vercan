@@ -1,0 +1,60 @@
+services:
+  app:
+    build:
+      context: ./docker/php
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    container_name: vercan_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - vercan
+    depends_on:
+      db:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: vercan_nginx
+    restart: unless-stopped
+    ports:
+      - "${FORWARD_APP_PORT:-8000}:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - app
+    networks:
+      - vercan
+
+  db:
+    image: postgres:17-alpine
+    container_name: vercan_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-vercan}
+      POSTGRES_USER: ${DB_USERNAME:-vercan}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    ports:
+      - "${FORWARD_DB_PORT:-5434}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-vercan} -d ${DB_DATABASE:-vercan}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - vercan
+
+volumes:
+  postgres_data:
+    name: vercan_postgres_data
+    driver: local
+
+networks:
+  vercan:
+    driver: bridge

@@ -1,0 +1,29 @@
+@import './vendor/adminlte.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+/*
+ * Sidebar colapsada (modo ícone-apenas): o AdminLTE não tem um elemento de
+ * texto curto pronto para a marca (logo-xs/logo-xl são pensados para trocar
+ * IMAGENS, com position: absolute) nem esconde o texto de botões fora do
+ * .sidebar-menu. Replica manualmente o mesmo padrão mostrar/esconder por
+ * hover que o AdminLTE já usa em .brand-text e nos <p> dos nav-link.
+ */
+.sidebar-brand .brand-text-collapsed {
+    display: none;
+}
+
+.sidebar-mini.sidebar-collapse .sidebar-brand .brand-text-collapsed {
+    display: inline-block;
+}
+
+.sidebar-mini.sidebar-collapse:not(.sidebar-without-hover) .app-sidebar:hover .sidebar-brand .brand-text-collapsed {
+    display: none;
+}
+
+.sidebar-mini.sidebar-collapse .sidebar-footer-text {
+    display: none;
+}
+
+.sidebar-mini.sidebar-collapse:not(.sidebar-without-hover) .app-sidebar:hover .sidebar-footer-text {
+    display: inline;
+}
