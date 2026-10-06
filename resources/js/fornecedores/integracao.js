@@ -46,7 +46,7 @@ function criarGuardaDeCorrida() {
 
     return {
         novoToken: () => ++atual,
-        éOMaisRecente: (token) => token === atual,
+        ehMaisRecente: (token) => token === atual,
     };
 }
 
@@ -87,7 +87,7 @@ export async function carregarCidades(estadoId, cidadeSelecionadaId = null) {
 
     const resultado = await buscarJson(`/estados/${estadoId}/cidades`);
 
-    if (!guardaCidades.éOMaisRecente(token)) {
+    if (!guardaCidades.ehMaisRecente(token)) {
         return;
     }
 
@@ -123,7 +123,7 @@ async function preencherEnderecoPorCep(cep) {
     const token = guardaEndereco.novoToken();
     const dados = await buscarJson(`/ceps/${cep.replace(/\D/g, '')}`);
 
-    if (!guardaEndereco.éOMaisRecente(token)) {
+    if (!guardaEndereco.ehMaisRecente(token)) {
         return;
     }
 
@@ -164,11 +164,11 @@ export function inicializarIntegracaoCep() {
     });
 }
 
-async function buscarReceitaWs(documento, éAindaRelevante) {
+async function buscarReceitaWs(documento, ehAindaRelevante) {
     const feedback = document.querySelector('[data-feedback-cnpj-nao-encontrado]');
     const dados = await buscarJson(`/cnpjs/${documento}`);
 
-    if (!éAindaRelevante()) {
+    if (!ehAindaRelevante()) {
         return;
     }
 
@@ -196,7 +196,7 @@ async function buscarReceitaWs(documento, éAindaRelevante) {
     }
 }
 
-async function verificarDocumentoDuplicado(documento, fornecedorId, éAindaRelevante) {
+async function verificarDocumentoDuplicado(documento, fornecedorId, ehAindaRelevante) {
     const feedback = document.querySelector('[data-feedback-documento-duplicado]');
     const parametros = new URLSearchParams({ documento });
 
@@ -206,7 +206,7 @@ async function verificarDocumentoDuplicado(documento, fornecedorId, éAindaRelev
 
     const dados = await buscarJson(`/fornecedores/verificar-documento?${parametros}`);
 
-    if (!éAindaRelevante()) {
+    if (!ehAindaRelevante()) {
         return;
     }
 
@@ -233,7 +233,7 @@ export function inicializarValidacaoEIntegracaoDoDocumento(fornecedorId) {
         // uma busca anterior ainda está em voo, a resposta atrasada dela se
         // reconhece como obsoleta e não sobrescreve o que está em tela agora.
         const token = guardaDocumento.novoToken();
-        const éAindaRelevante = () => guardaDocumento.éOMaisRecente(token);
+        const ehAindaRelevante = () => guardaDocumento.ehMaisRecente(token);
 
         const documento = campo.value.replace(/[^0-9A-Za-z]/g, '');
 
@@ -257,10 +257,10 @@ export function inicializarValidacaoEIntegracaoDoDocumento(fornecedorId) {
             return;
         }
 
-        await verificarDocumentoDuplicado(documento, fornecedorId, éAindaRelevante);
+        await verificarDocumentoDuplicado(documento, fornecedorId, ehAindaRelevante);
 
         if (tipoPessoa === 'juridica' && documento.length === 14) {
-            await buscarReceitaWs(documento, éAindaRelevante);
+            await buscarReceitaWs(documento, ehAindaRelevante);
         }
     });
 }

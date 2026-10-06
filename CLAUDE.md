@@ -86,6 +86,11 @@ essas camadas — não pule etapas mesmo para algo que pareça trivial:
 
 ### Convenções de nomenclatura e tipagem
 
+- **Identificadores são ASCII puro, sem exceção**: nomes de variáveis, funções, métodos, propriedades, parâmetros,
+  chaves de objeto e exports em PHP e JavaScript nunca podem conter caracteres acentuados ou qualquer caractere
+  fora de ASCII. Escreva o vocabulário pt-BR sem diacríticos nos identificadores (ex.: `ehMaisRecente`, não
+  `éOMaisRecente`). Acentos são permitidos em textos de interface, mensagens, comentários e documentação. A
+  especificação completa está em [`specs/REGRAS_DO_PROJETO.md`](specs/REGRAS_DO_PROJETO.md).
 - **A nomenclatura de domínio é em pt-BR**: tabelas/colunas do banco, nomes de variáveis de model/domínio e nomes
   de campos de FormRequest são sempre em português (ex.: tabela `fornecedores`, colunas `razao_social`, `cnpj`,
   `nome_fantasia`). Nomes de nível de framework (classes, namespaces, métodos como `index`/`store`/`handle`)
